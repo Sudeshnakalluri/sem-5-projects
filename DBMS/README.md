@@ -357,6 +357,7 @@ CREATE INDEX idx_budget_user   ON budgets (user_id, year, month);
 ---
 
 ## 11. Backend (`backend/`)
+````
 
 **Technology:** Python (Flask) with `mysql-connector-python` *(replace if you used Node.js or FastAPI)*.
 
