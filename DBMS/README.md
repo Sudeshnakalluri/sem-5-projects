@@ -579,11 +579,3 @@ Ledgerly provides a complete solution for managing personal finances. Users can 
 
 ---
 
-## 18. Project Report
-
-The detailed project report is available here: [`Ledgerly_Project_Report.pdf`](Ledgerly_Project_Report.pdf)
-
-**GitHub repository link (also included in the report):** https://github.com/<your-username>/ledgerly
-
----
-
