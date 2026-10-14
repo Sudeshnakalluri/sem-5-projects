@@ -563,12 +563,6 @@ SELECT COUNT(*) FROM categories WHERE user_id = 2;   -- expected 0
 | Budgets page | ![Budgets](screenshots/budgets.png) |
 | Goals page | ![Goals](screenshots/goals.png) |
 
-**Sample output: budget vs actual (user 1, October 2026)**
-
-| category | limit_amount | spent | used_percent |
-|---|---|---|---|
-| Food | 5000.00 | 1150.00 | 23.0 |
-| Travel | 3000.00 | 2500.00 | 83.3 |
 
 ---
 
