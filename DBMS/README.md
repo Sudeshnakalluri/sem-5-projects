@@ -91,93 +91,8 @@ Most people do not know where their money goes each month. They forget recurring
 | generates | RECURRING_EXPENSE – TRANSACTION | 1 : N |
 | receives | GOAL – GOAL_CONTRIBUTION | 1 : N |
 
-### UML Class Diagram
-*(GitHub renders this automatically. You can also replace it with an image.)*
-
-```mermaid
-classDiagram
-    class User {
-        +int id
-        +string name
-        +string email
-        +string password
-        +string currency
-        +decimal monthly_income_goal
-        +string avatar_color
-    }
-    class Category {
-        +int id
-        +int user_id
-        +string name
-        +string type
-        +string color
-        +string icon
-        +bool is_default
-    }
-    class Transaction {
-        +int id
-        +int user_id
-        +int category_id
-        +int recurring_expense_id
-        +string type
-        +decimal amount
-        +string description
-        +date date
-        +string payment_method
-        +bool is_recurring
-        +string tags
-    }
-    class RecurringExpense {
-        +int id
-        +int user_id
-        +int category_id
-        +string title
-        +decimal amount
-        +string type
-        +string frequency
-        +date start_date
-        +date next_due_date
-        +date end_date
-        +bool is_active
-        +bool auto_add
-    }
-    class Budget {
-        +int id
-        +int user_id
-        +int category_id
-        +int month
-        +int year
-        +decimal limit_amount
-        +int notify_at_percent
-    }
-    class Goal {
-        +int id
-        +int user_id
-        +string title
-        +decimal target_amount
-        +decimal saved_amount
-        +date target_date
-        +string status
-    }
-    class GoalContribution {
-        +int id
-        +int goal_id
-        +decimal amount
-        +date date
-        +string note
-    }
-
-    User "1" --> "*" Category : creates
-    User "1" --> "*" Goal : tracks
-    User "1" --> "*" Budget : sets
-    Category "1" --> "*" Transaction : used in
-    Category "1" --> "*" Budget : limits
-    Category "1" --> "*" RecurringExpense : tags
-    RecurringExpense "1" --> "*" Transaction : generates
-    Goal "1" --> "*" GoalContribution : receives
-```
-
----
+### UML Diagram
+![UML Diagram](screenshots/uml_diagram.png)
 
 ## 5. Relational Schema Mapping
 
@@ -298,75 +213,6 @@ All queries are in [`database/queries.sql`](database/queries.sql).
 | 8 | Upcoming recurring payments in next 7 days | Reminders | WHERE, date functions |
 | 9 | Net balance per user | Income minus expense | CASE, SUM, GROUP BY |
 | 10 | Goals not yet started | Spot goals with no contributions | NOT EXISTS (subquery) |
-
-### Sample queries
-
-**Budget vs actual spending**
-```sql
-SELECT c.name AS category,
-       b.limit_amount,
-       COALESCE(SUM(t.amount), 0) AS spent,
-       ROUND(COALESCE(SUM(t.amount), 0) / b.limit_amount * 100, 1) AS used_percent
-FROM budgets b
-JOIN categories c ON b.category_id = c.id
-LEFT JOIN transactions t
-       ON t.category_id = b.category_id
-      AND t.type = 'expense'
-      AND MONTH(t.date) = b.month
-      AND YEAR(t.date) = b.year
-WHERE b.user_id = 1 AND b.month = 10 AND b.year = 2026
-GROUP BY c.name, b.limit_amount;
-```
-*Purpose: shows how much of each monthly budget has been used.*
-
-**Categories that crossed the alert level**
-```sql
-SELECT c.name, b.limit_amount, SUM(t.amount) AS spent, b.notify_at_percent
-FROM budgets b
-JOIN categories c ON b.category_id = c.id
-JOIN transactions t
-  ON t.category_id = b.category_id
- AND t.type = 'expense'
- AND MONTH(t.date) = b.month AND YEAR(t.date) = b.year
-WHERE b.user_id = 1 AND b.month = 10 AND b.year = 2026
-GROUP BY c.name, b.limit_amount, b.notify_at_percent
-HAVING SUM(t.amount) >= b.limit_amount * b.notify_at_percent / 100;
-```
-*Purpose: finds budgets that need a warning notification.*
-
-**Users who spent more than their own average (subquery)**
-```sql
-SELECT t.id, t.amount, t.date
-FROM transactions t
-WHERE t.user_id = 1
-  AND t.type = 'expense'
-  AND t.amount > (SELECT AVG(amount)
-                  FROM transactions
-                  WHERE user_id = 1 AND type = 'expense');
-```
-*Purpose: highlights unusually large expenses.*
-
-**Net balance per user**
-```sql
-SELECT u.name,
-       SUM(CASE WHEN t.type = 'income'  THEN t.amount ELSE 0 END) AS total_income,
-       SUM(CASE WHEN t.type = 'expense' THEN t.amount ELSE 0 END) AS total_expense,
-       SUM(CASE WHEN t.type = 'income'  THEN t.amount ELSE -t.amount END) AS net_balance
-FROM users u
-LEFT JOIN transactions t ON t.user_id = u.id
-GROUP BY u.id, u.name;
-```
-*Purpose: gives each user's overall financial position.*
-
-**Goals with no contributions (subquery)**
-```sql
-SELECT g.id, g.title
-FROM goals g
-WHERE NOT EXISTS (SELECT 1 FROM goal_contributions gc WHERE gc.goal_id = g.id);
-```
-*Purpose: reminds users about goals they have not started.*
-
----
 
 ## 9. Repository Structure
 
@@ -507,47 +353,6 @@ CREATE TABLE goal_contributions (
 CREATE INDEX idx_txn_user_date ON transactions (user_id, date);
 CREATE INDEX idx_txn_category  ON transactions (category_id);
 CREATE INDEX idx_budget_user   ON budgets (user_id, year, month);
-```
-
-### 10.2 Sample data (`database/sample_data.sql`)
-
-```sql
-USE ledgerly;
-
-INSERT INTO users (name, email, password, currency, monthly_income_goal, avatar_color) VALUES
-('Ravi Kumar', 'ravi@example.com', 'hashed_password_1', 'INR', 50000, '#4F46E5'),
-('Priya S',    'priya@example.com', 'hashed_password_2', 'INR', 60000, '#10B981');
-
-INSERT INTO categories (user_id, name, type, color, icon, is_default) VALUES
-(1, 'Salary', 'income',  '#22C55E', 'wallet',  TRUE),
-(1, 'Food',   'expense', '#F97316', 'utensils', TRUE),
-(1, 'Travel', 'expense', '#3B82F6', 'plane',    TRUE),
-(1, 'Rent',   'expense', '#EF4444', 'home',     TRUE);
-
-INSERT INTO recurring_expenses
-(user_id, category_id, title, amount, type, frequency, start_date, next_due_date, is_active, auto_add) VALUES
-(1, 4, 'House Rent', 12000, 'expense', 'monthly', '2026-01-01', '2026-11-01', TRUE, TRUE);
-
-INSERT INTO transactions
-(user_id, category_id, recurring_expense_id, type, amount, description, date, payment_method, is_recurring, tags) VALUES
-(1, 1, NULL, 'income',  50000, 'October salary', '2026-10-01', 'bank',   FALSE, 'salary'),
-(1, 4, 1,    'expense', 12000, 'October rent',   '2026-10-02', 'upi',    TRUE,  'rent,home'),
-(1, 2, NULL, 'expense',   250, 'Lunch',          '2026-10-05', 'upi',    FALSE, 'food'),
-(1, 2, NULL, 'expense',   900, 'Dinner outing',  '2026-10-09', 'card',   FALSE, 'food,friends'),
-(1, 3, NULL, 'expense',  2500, 'Train tickets',  '2026-10-11', 'upi',    FALSE, 'travel');
-
-INSERT INTO budgets (user_id, category_id, month, year, limit_amount, notify_at_percent) VALUES
-(1, 2, 10, 2026, 5000, 80),
-(1, 3, 10, 2026, 3000, 90);
-
-INSERT INTO goals (user_id, title, target_amount, saved_amount, target_date, status) VALUES
-(1, 'New Laptop', 60000, 15000, '2027-03-31', 'active'),
-(1, 'Goa Trip',   20000, 0,     '2027-01-15', 'active');
-
-INSERT INTO goal_contributions (goal_id, amount, date, note) VALUES
-(1, 10000, '2026-09-15', 'First instalment'),
-(1,  5000, '2026-10-10', 'Bonus money');
-```
 
 ---
 
