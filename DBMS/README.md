@@ -751,15 +751,11 @@ SELECT COUNT(*) FROM categories WHERE user_id = 2;   -- expected 0
 | Screen | Screenshot |
 |---|---|
 | ER Diagram | ![ER](screenshots/er_diagram.png) |
-| Database tables created | ![Tables](screenshots/tables_created.png) |
-| Sample data in tables | ![Data](screenshots/sample_data.png) |
 | Login page | ![Login](screenshots/login.png) |
 | Dashboard | ![Dashboard](screenshots/dashboard.png) |
 | Transactions page | ![Transactions](screenshots/transactions.png) |
 | Budgets page | ![Budgets](screenshots/budgets.png) |
 | Goals page | ![Goals](screenshots/goals.png) |
-| Advanced query output | ![Query](screenshots/query_output.png) |
-| Constraint test output | ![Constraint](screenshots/constraint_test.png) |
 
 **Sample output: budget vs actual (user 1, October 2026)**
 
@@ -791,10 +787,3 @@ The detailed project report is available here: [`Ledgerly_Project_Report.pdf`](L
 
 ---
 
-## 19. Contributors
-
-| Name | Contribution |
-|---|---|
-| [Member 1] | [e.g. ER design, schema, SQL queries] |
-| [Member 2] | [e.g. Backend and API] |
-| [Member 3] | [e.g. Frontend and testing] |
