@@ -11,7 +11,7 @@
 | Name | Roll No. |
 |---|---|
 | K. Kiranmai | CB.SC.U4AIE24119 |
-| K. Sudeshna | CB.SC.U4AIE24119 |
+| K. Sudeshna | CB.SC.U4AIE24120 |
 | P. Myagi Ranganadh | CB.SC.U4AIE24143| 
 | Ch.Devisri | CB.SC.U4AIE24163| 
 
