@@ -8,8 +8,8 @@
 
 **Project Title:** Ledgerly – Personal Finance Management System
 
-| Name | Roll No. / Reg. No. |
-|---|---|---|
+| Name | Roll No. |
+|---|---|
 | K. Kiranmai | CB.SC.U4AIE24119 |
 | K. Sudeshna | CB.SC.U4AIE24119 |
 | P. Myagi Ranganadh | CB.SC.U4AIE24143| 
