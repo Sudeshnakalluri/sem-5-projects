@@ -8,17 +8,13 @@
 
 **Project Title:** Ledgerly – Personal Finance Management System
 
-| Name | Roll No. / Reg. No. | Role |
+| Name | Roll No. / Reg. No. |
 |---|---|---|
-| [Member 1 name] | [Roll no.] | [e.g. Database design] |
-| [Member 2 name] | [Roll no.] | [e.g. Backend] |
-| [Member 3 name] | [Roll no.] | [e.g. Frontend] |
+| K. Kiranmai | CB.SC.U4AIE24119 |
+| K. Sudeshna | CB.SC.U4AIE24119 |
+| P. Myagi Ranganadh | CB.SC.U4AIE24143| 
+| Ch.Devisri | CB.SC.U4AIE24163| 
 
-**Course:** [Course name and code]
-**Institution:** [College / University name]
-**Guide / Faculty:** [Faculty name]
-
----
 
 ## 2. Project Overview, Introduction and Problem Statement
 
